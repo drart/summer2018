@@ -10,5 +10,62 @@
     <script src="sketch.js"></script>
   </head>
   <body>
+
+        <div id="pressure"></div>
+        <div id="mousex"></div>
+        <div id="mousey"></div>
+        <div id="azimuth"></div>
+        <div id="altitude"></div>
+
+        <div id="numtouches"></div>
+        <script>
+
+            document.addEventListener("mousemove", printTouchPos);
+            document.addEventListener("mousedown", printTouchPos);
+            document.addEventListener("mouseup", printTouchPos);
+
+            var touchdivs = []; 
+            for ( var i = 0; i < 12; i++){ // 12 is the limit for apple devices
+                touchdivs.push( document.createElement('div') );
+                document.body.appendChild( touchdivs[i] );
+            }
+
+            function printTouchPos(event) {
+                /// mouse event
+                if (event.clientX !== undefined){
+                    document.getElementById("mousex").innerHTML = event.clientX;
+		    lp.freq(event.clientX);
+                    document.getElementById("mousey").innerHTML = event.clientY;
+		    lp.res( (window.innerHeight - event.clientY)/50);
+                }else{ /// touch event
+                    for (var i = 0; i <  event.touches.length; i++ ){
+                        document.getElementById("numtouches").innerHTML = event.touches.length;
+                        document.getElementById("mousex").innerHTML = event.touches[i].clientX;
+                        document.getElementById("mousey").innerHTML = event.touches[i].clientY;
+                        document.getElementById("pressure").innerHTML = event.touches[i].force;
+                        if (event.touches[i].touchType === "stylus"){
+                            if( event.touches[i].azimuthAngle !== undefined){
+                                document.getElementById("azimuth").innerHTML = event.touches[i].azimuthAngle;
+                            }
+                            if( event.touches[i].altitudeAngle !== undefined){
+                                document.getElementById("altitude").innerHTML = event.touches[i].altitudeAngle;
+                            }
+                        }
+                    }
+                }
+	}
+            document.addEventListener("touchstart", printTouchPos);
+            document.addEventListener("touchmove", printTouchPos);
+            document.addEventListener("touchend", printTouchPos);
+            document.addEventListener("touchforcechange", printTouchPos);
+            // block contextual menu on right click
+            document.addEventListener("contextmenu", function(event){
+                event.preventDefault();
+                event.stopPropagation();
+                return false;
+            });
+
+	</script>
+
   </body>
 </html>
